@@ -8,8 +8,8 @@ public abstract record Todo
     string Title,
     DateTimeOffset CreatedDate,
     User CreatedBy,
-    bool isComplated = false,
-    bool isDeleted = false
+    bool IsCompleted = false,
+    bool IsDeleted = false
 )
 {
     public Todo? Parent { get; init; }
