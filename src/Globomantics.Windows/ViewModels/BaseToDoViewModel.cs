@@ -1,6 +1,8 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
 using Globomantics.Domain;
+using Globomantics.Windows.Messages;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -83,8 +85,8 @@ namespace Globomantics.Windows.ViewModels
             {
                 return;
             }
-            var parent = AvailableParentTasks?.SingleOrDefault(t => t.Parent is not null 
-            && t.Parent.Id == model.Parent.Id);
+            var parent = AvailableParentTasks?.SingleOrDefault(t =>
+            model.Parent is not null && t.Id == model.Parent.Id);
             
             Model = model as T;
             Title = model.Title;
@@ -99,7 +101,8 @@ namespace Globomantics.Windows.ViewModels
             {
                 if (Model is not null)
                 {
-                        Model = Model with { IsDeleted = true }; 
+                        Model = Model with { IsDeleted = true };
+                        WeakReferenceMessenger.Default.Send<TodoDeleteMessage>(new(Model));
                 }
             });
         }

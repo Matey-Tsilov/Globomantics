@@ -1,6 +1,8 @@
 ﻿using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
 using Globomantics.Domain;
 using Globomantics.Infrastructure.Data.Repositories;
+using Globomantics.Windows.Messages;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,11 +30,11 @@ public class FeatureViewModel : BaseToDoViewModel<Feature>
         SaveCommand = new RelayCommand(async () => await SaveAsync());
 
     }
-    public override Task SaveAsync()
+    public override async Task SaveAsync()
     {
         if (string.IsNullOrWhiteSpace(Title))
         {
-            ShowError?.Invoke($"{nameof(Description)} cannot be empty!");
+            ShowError?.Invoke($"{nameof(Title)} cannot be empty!");
             return;
         }
         if (Model is null)
@@ -58,9 +60,20 @@ public class FeatureViewModel : BaseToDoViewModel<Feature>
                 Description = Description,
                 Parent = Parent,
                 IsCompleted = IsCompleted
-            };
+            }; 
 
         }
+
+        await repository.AddAsync(Model);
+        await repository.SaveChangesAsync();
+
+        WeakReferenceMessenger.Default.Send<TodoSavedMessage>(new(Model));
+    }
+    public override void UpdateModel(Todo model)
+    {
+        if (model is not Feature feature) return;
+        base.UpdateModel(model);
+        Description = feature.Description;
     }
 }
 

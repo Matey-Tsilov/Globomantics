@@ -16,7 +16,7 @@ namespace Globomantics.Windows.Factories
         public static IEnumerable<string> TodoTypes = new[]
         {
             nameof(Bug),
-            nameof(Bug)
+            nameof(Feature)
         };
 
         public ToDoViewModelFactory(IServiceProvider serviceProvider)

@@ -1,5 +1,6 @@
 ﻿using Globomantics.Domain;
 using Globomantics.Infrastructure.Data.Repositories;
+using Globomantics.Windows.Factories;
 using Globomantics.Windows.ViewModels;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -25,7 +26,8 @@ public partial class App : Application
         serviceCollection.AddSingleton<IRepository<Bug>, ToDoInMemoryRepository<Bug>>();
         serviceCollection.AddSingleton<IRepository<Feature>, ToDoInMemoryRepository<Feature>>();
         serviceCollection.AddSingleton<IRepository<TodoTask>, ToDoInMemoryRepository<TodoTask>>();
-
+        
+        serviceCollection.AddTransient<ToDoViewModelFactory>();
         serviceCollection.AddTransient<BugViewModel>();
         serviceCollection.AddTransient<FeatureViewModel>();
         serviceCollection.AddTransient<MainViewModel>();

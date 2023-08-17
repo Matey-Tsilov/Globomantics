@@ -1,10 +1,13 @@
-﻿using Globomantics.Domain;
+﻿using CommunityToolkit.Mvvm.Messaging;
+using Globomantics.Domain;
 using Globomantics.Windows.Factories;
+using Globomantics.Windows.Messages;
 using Globomantics.Windows.ViewModels;
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Navigation;
@@ -35,6 +38,10 @@ public partial class MainWindow : Window
         };
 
         TodoType.ItemsSource = ToDoViewModelFactory.TodoTypes;
+        WeakReferenceMessenger.Default.Register<TodoDeleteMessage>(this, (sender, message) => 
+        CreateTodoControlContainer.Children.Clear());
+        WeakReferenceMessenger.Default.Register<TodoSavedMessage>(this, (sender, message) => 
+        CreateTodoControlContainer.Children.Clear());
     }
 
     protected override async void OnActivated(EventArgs e)
@@ -56,9 +63,20 @@ public partial class MainWindow : Window
     {
         IToDoViewModel viewModel = toDoViewModelFactory.CreateViewModel(
             type,
-            null,
+            mainViewModel.Unfinished.ToArray(),
             model
             );
+        viewModel.ShowError = (message) => {
+            MessageBox.Show(message);
+        };
+        viewModel.ShowAlert = (message) => {
+            MessageBox.Show(message);
+        };
+        mainViewModel.ShowOpenFileDialog = () => 
+        OpenFileDialog(".jpg", "Images (.jpg)|*.jpg", true);
+
+        return ToDoUserControlFactory.CreateUserControl(viewModel); 
+
     }
 
     private void Search_OnClick(object sender, RoutedEventArgs e)
@@ -86,7 +104,7 @@ public partial class MainWindow : Window
 
         var control = CreateUserControl(
             list.SelectedValue.GetType().Name,
-            list.SelectedValue);
+            list.SelectedValue as Todo);
 
         CreateTodoControlContainer.Children.Add(control);
 
