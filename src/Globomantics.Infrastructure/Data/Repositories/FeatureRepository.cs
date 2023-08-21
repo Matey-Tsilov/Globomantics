@@ -8,52 +8,55 @@ public class FeatureRepository : ToDoRepository<Feature>
     public FeatureRepository(GlobomanticsDbContext context) : base(context)
     {
     }
-    public override async Task AddAsync(Bug bug)
+    public override async Task AddAsync(Domain.Feature feature)
     {
-        var existingBug = await Context.Bugs.FirstOrDefaultAsync(b => b.Id == bug.Id);
-        var user = await Context.Users.FirstOrDefaultAsync(u => u.Id == bug.CreatedBy.Id);
+        var existingFeature = await Context.Features.FirstOrDefaultAsync(b => b.Id == feature.Id);
+        var user = await Context.Users.FirstOrDefaultAsync(u => u.Id == feature.CreatedBy.Id);
 
-        user ??= new() { Id = bug.CreatedBy.Id, Name = bug.CreatedBy.Name };
+        user ??= new() { Id = feature.CreatedBy.Id, Name = feature.CreatedBy.Name };
 
-        if (existingBug is not null)
+        if (existingFeature is not null)
         {
-            await UpdateAsync(bug, existingBug, user);
+            await UpdateAsync(feature, existingFeature, user);
         }
         else
         {
-            await CreateAsync(bug, user);
+            await CreateAsync(feature, user);
         }
     }
 
-    private async Task CreateAsync(Bug bug, Models.User user)
+    private async Task CreateAsync(Feature feature, Models.User user)
     {
-        var bugToAdd = DomainToDataMapping.MapToDoFromDomain<Bug, Data.Models.Bug>(bug);
+        var featureToAdd = DomainToDataMapping.MapToDoFromDomain<Feature, Data.Models.Feature>(feature);
 
-        await SetParentAsync(bugToAdd, bug);
+        await SetParentAsync(featureToAdd, feature);
 
-        bugToAdd.CreatedBy = user;
+        featureToAdd.CreatedBy = user;
+        featureToAdd.AssignedTo = user;
 
-        await Context.AddAsync(bugToAdd);
+
+        await Context.AddAsync(featureToAdd);
     }
 
-    private async Task UpdateAsync(Bug bug, Models.Bug existingBug, Models.User user)
+    private async Task UpdateAsync(Feature feature, Data.Models.Feature featureToUpdate, Data.Models.User user)
     {
-        existingBug.IsCompleted = bug.IsCompleted;
-        existingBug.AffectedVersion = bug.AffectedVersion;
-        existingBug.AffectedUsers = bug.AffectedUsers;
-        existingBug.Title = bug.Title;
-        existingBug.Description = bug.Description;
-        existingBug.Severity = (Data.Models.Severity)bug.Severity;
+        await SetParentAsync(featureToUpdate, feature);
 
-        await SetParentAsync(existingBug, bug);
+        featureToUpdate.IsCompleted = feature.IsCompleted;
+        featureToUpdate.Component = feature.Component;
+        featureToUpdate.Priority = feature.Priority;
+        featureToUpdate.AssignedTo = user;
+        featureToUpdate.CreatedBy = user;
+        featureToUpdate.Title = feature.Title;
+        featureToUpdate.Description = feature.Description;
 
-        Context.Bugs.Update(existingBug);
+        Context.Features.Update(featureToUpdate);
     }
 
-    public override async Task<Bug> GetAsync(Guid id)
+    public override async Task<Domain.Feature> GetAsync(Guid id)
     {
-        var data = await Context.Bugs.SingleAsync(bug => bug.Id == id);
+        var data = await Context.Features.SingleAsync(bug => bug.Id == id);
 
-        return DataToDomainMapping.MapToDoFromData<Data.Models.Bug, Domain.Bug>(data);
+        return DataToDomainMapping.MapToDoFromData<Data.Models.Feature, Domain.Feature>(data);
     }
 }
