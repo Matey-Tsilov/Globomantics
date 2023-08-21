@@ -1,6 +1,8 @@
 ﻿using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
 using Globomantics.Domain;
 using Globomantics.Infrastructure.Data.Repositories;
+using Globomantics.Windows.Messages;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -155,5 +157,7 @@ public class BugViewModel : BaseToDoViewModel<Bug>
 
         await repository.AddAsync(Model);
         await repository.SaveChangesAsync();
+
+        WeakReferenceMessenger.Default.Send<TodoSavedMessage>(new(Model));
     }
 }

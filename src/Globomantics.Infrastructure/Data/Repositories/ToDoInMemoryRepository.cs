@@ -8,7 +8,7 @@ public class ToDoInMemoryRepository<T> : IRepository<T> where T : Todo
     private ConcurrentDictionary<Guid, T> Items { get; } = new();
     public Task AddAsync(T item)
     {
-        Items.TryAdd(item.Id, item);    
+        Items.TryAdd(item.Id, item);
         return Task.CompletedTask;
     }
 
@@ -23,7 +23,7 @@ public class ToDoInMemoryRepository<T> : IRepository<T> where T : Todo
         return Task.FromResult(Items[id]);
     }
 
-    public Task<T> GetByAsync(string value)
+    public Task<T> FindByAsync(string value)
     {
         var task = (from item in Items.Values
                     where item.Title == value

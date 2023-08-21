@@ -34,7 +34,7 @@ namespace Globomantics.Windows.ViewModels
             get => title;
             set
             {
-                Title = value;
+                title = value;
                 OnPropertyChanged(nameof(Title));
             }
         }
@@ -43,7 +43,7 @@ namespace Globomantics.Windows.ViewModels
             get => parent;
             set
             {
-                Parent = value;
+                parent = value;
                 OnPropertyChanged(nameof(Parent));
                 OnPropertyChanged(nameof(IsExisting));
 
@@ -54,7 +54,7 @@ namespace Globomantics.Windows.ViewModels
             get => isCompleted;
             set
             {
-                IsCompleted = value;
+                isCompleted = value;
                 OnPropertyChanged(nameof(IsCompleted));
                 OnPropertyChanged(nameof(IsExisting));
 
