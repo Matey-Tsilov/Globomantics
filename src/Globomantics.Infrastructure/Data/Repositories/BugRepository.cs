@@ -55,6 +55,6 @@ public class BugRepository : ToDoRepository<Bug>
     {
         var data = await Context.Bugs.SingleAsync(bug => bug.Id == id);
 
-        return DataToDomainMapping.MapToDoFromData<Bug, Domain.Bug>(data);
+        return DataToDomainMapping.MapToDoFromData<Data.Models.Bug, Domain.Bug>(data);
     }
 }

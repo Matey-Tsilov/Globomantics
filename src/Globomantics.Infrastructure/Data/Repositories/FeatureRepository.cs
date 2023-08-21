@@ -55,7 +55,7 @@ public class FeatureRepository : ToDoRepository<Feature>
 
     public override async Task<Domain.Feature> GetAsync(Guid id)
     {
-        var data = await Context.Features.SingleAsync(bug => bug.Id == id);
+        var data = await Context.Features.SingleAsync(feature => feature.Id == id);
 
         return DataToDomainMapping.MapToDoFromData<Data.Models.Feature, Domain.Feature>(data);
     }
