@@ -4,9 +4,6 @@ using Globomantics.Domain;
 using Globomantics.Infrastructure.Data.Repositories;
 using Globomantics.Windows.Messages;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Globomantics.Windows.ViewModels;
@@ -46,28 +43,35 @@ public class FeatureViewModel : BaseToDoViewModel<Feature>
                 1,
                 App.CurrentUser,
                 App.CurrentUser)
-            { 
+            {
                 DueDate = System.DateTimeOffset.Now.AddDays(10),
-                Parent= Parent,
+                Parent = Parent,
                 IsCompleted = IsCompleted
             };
 
         }
         else
         {
-            Model = Model with { 
+            Model = Model with
+            {
                 Title = Title,
                 Description = Description,
                 Parent = Parent,
                 IsCompleted = IsCompleted
-            }; 
+            };
 
         }
 
-        await repository.AddAsync(Model);
-        await repository.SaveChangesAsync();
-
-        WeakReferenceMessenger.Default.Send<TodoSavedMessage>(new(Model));
+        try
+        {
+            await repository.AddAsync(Model);
+            await repository.SaveChangesAsync();
+            WeakReferenceMessenger.Default.Send<TodoSavedMessage>(new(Model));
+        }
+        catch (Exception ex)
+        {
+            ShowError?.Invoke("Could not safe to the database!");
+        }
     }
     public override void UpdateModel(Todo model)
     {

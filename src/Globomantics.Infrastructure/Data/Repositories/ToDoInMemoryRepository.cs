@@ -12,7 +12,7 @@ public class ToDoInMemoryRepository<T> : IRepository<T> where T : Todo
         return Task.CompletedTask;
     }
 
-    public Task<IEnumerable<T>> AllAsync(Guid id)
+    public Task<IEnumerable<T>> AllAsync()
     {
         var items = Items.Values.ToArray();
         return Task.FromResult<IEnumerable<T>>(items);

@@ -22,7 +22,7 @@ public abstract class ToDoRepository<T> : IRepository<T>
 
         return DataToDomainMapping.MapToDoFromData<Data.Models.TodoTask, T>(task);
     }
-    public virtual async Task<IEnumerable<T>> AllAsync(Guid id)
+    public virtual async Task<IEnumerable<T>> AllAsync()
     {
         return await Context.TodoTasks
             .Where(t => !t.IsDeleted)

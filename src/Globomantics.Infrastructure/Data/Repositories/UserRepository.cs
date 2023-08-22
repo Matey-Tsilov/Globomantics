@@ -27,7 +27,7 @@ public class UserRepository : IRepository<User>
         }
     }
 
-    public async Task<IEnumerable<User>> AllAsync(Guid id)
+    public async Task<IEnumerable<User>> AllAsync()
     {
         return await context.Users.Select(u => DataToDomainMapping.MapUser(u)).ToArrayAsync();
     }

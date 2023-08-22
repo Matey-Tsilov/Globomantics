@@ -28,9 +28,10 @@ public partial class App : Application
 
         serviceCollection.AddDbContext<GlobomanticsDbContext>(ServiceLifetime.Scoped);
 
-        serviceCollection.AddSingleton<IRepository<Bug>, ToDoInMemoryRepository<Bug>>();
-        serviceCollection.AddSingleton<IRepository<Feature>, ToDoInMemoryRepository<Feature>>();
-        serviceCollection.AddSingleton<IRepository<TodoTask>, ToDoInMemoryRepository<TodoTask>>();
+        serviceCollection.AddSingleton<IRepository<Bug>, BugRepository>();
+        serviceCollection.AddSingleton<IRepository<Feature>, FeatureRepository>();
+        serviceCollection.AddSingleton<IRepository<TodoTask>, TodoTaskRepository>();
+        serviceCollection.AddSingleton<IRepository<User>, UserRepository>();
 
         serviceCollection.AddTransient<ToDoViewModelFactory>();
         serviceCollection.AddTransient<BugViewModel>();
@@ -44,23 +45,31 @@ public partial class App : Application
 
     private async void OnStartup(object sender, StartupEventArgs e)
     {
-        var context = ServiceProvider.GetRequiredService<GlobomanticsDbContext>();
-
-        await context.Database.MigrateAsync();
-
-        var user = context.Users.FirstOrDefault();
-
-        if (user != null)
+        try
         {
-            user = new Infrastructure.Data.Models.User { Name = "Matey" };
-            context.Users.Add(user);
-            context.SaveChanges();
+            var context = ServiceProvider.GetRequiredService<GlobomanticsDbContext>();
+
+            await context.Database.MigrateAsync();
+
+            var user = context.Users.FirstOrDefault();
+
+            if (user is null)
+            {
+                user = new Infrastructure.Data.Models.User { Name = "Matey" };
+                context.Users.Add(user);
+                context.SaveChanges();
+            }
+
+            App.CurrentUser = DataToDomainMapping.MapUser(user);
+
+            var mainWindow = ServiceProvider.GetRequiredService<MainWindow>();
+
+            mainWindow?.Show();
+
         }
+        catch (Exception ex)
+        {
 
-        App.CurrentUser = DataToDomainMapping.MapUser(user);
-
-        var mainWindow = ServiceProvider.GetRequiredService<MainWindow>();
-
-        mainWindow?.Show();
+        }
     }
 }

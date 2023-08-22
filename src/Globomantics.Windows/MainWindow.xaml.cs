@@ -21,7 +21,7 @@ public partial class MainWindow : Window
 
     public MainWindow(MainViewModel mainViewModel,
         ToDoViewModelFactory toDoViewModelFactory)
-    { 
+    {
         InitializeComponent();
 
         this.mainViewModel = mainViewModel;
@@ -30,17 +30,19 @@ public partial class MainWindow : Window
 
         mainViewModel.ShowSaveFileDialog = () => OpenCreateFileDialog();
         mainViewModel.ShowOpenFileDialog = () => OpenFileDialog(".json", "JSON (.json)|*.json", true);
-        mainViewModel.ShowError = (message) => {
+        mainViewModel.ShowError = (message) =>
+        {
             MessageBox.Show(message);
         };
-        mainViewModel.ShowAlert = (message) => {
+        mainViewModel.ShowAlert = (message) =>
+        {
             MessageBox.Show(message);
         };
 
         TodoType.ItemsSource = ToDoViewModelFactory.TodoTypes;
-        WeakReferenceMessenger.Default.Register<TodoDeleteMessage>(this, (sender, message) => 
+        WeakReferenceMessenger.Default.Register<TodoDeleteMessage>(this, (sender, message) =>
         CreateTodoControlContainer.Children.Clear());
-        WeakReferenceMessenger.Default.Register<TodoSavedMessage>(this, (sender, message) => 
+        WeakReferenceMessenger.Default.Register<TodoSavedMessage>(this, (sender, message) =>
         CreateTodoControlContainer.Children.Clear());
     }
 
@@ -58,7 +60,7 @@ public partial class MainWindow : Window
         }
     }
 
-    private UserControl CreateUserControl(string type, 
+    private UserControl CreateUserControl(string type,
         Todo? model = default)
     {
         IToDoViewModel viewModel = toDoViewModelFactory.CreateViewModel(
@@ -66,16 +68,18 @@ public partial class MainWindow : Window
             mainViewModel.Unfinished.ToArray(),
             model
             );
-        viewModel.ShowError = (message) => {
+        viewModel.ShowError = (message) =>
+        {
             MessageBox.Show(message);
         };
-        viewModel.ShowAlert = (message) => {
+        viewModel.ShowAlert = (message) =>
+        {
             MessageBox.Show(message);
         };
-        mainViewModel.ShowOpenFileDialog = () => 
+        mainViewModel.ShowOpenFileDialog = () =>
         OpenFileDialog(".jpg", "Images (.jpg)|*.jpg", true);
 
-        return ToDoUserControlFactory.CreateUserControl(viewModel); 
+        return ToDoUserControlFactory.CreateUserControl(viewModel);
 
     }
 

@@ -2,5 +2,5 @@
 
 public class TodoTask : Todo
 {
-    public DateTimeOffset DueDate { get; init; }
+    public DateTimeOffset DueDate { get; set; }
 }

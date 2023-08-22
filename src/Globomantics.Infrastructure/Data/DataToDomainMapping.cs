@@ -21,14 +21,14 @@ public class DataToDomainMapping
     {
         if (user is null) return null!;
 
-        return new(user.Name) { Id = user.Id };
+        return new Domain.User(user.Name) { Id = user.Id };
     }
     private static Domain.Bug MapBug(Data.Models.Bug bug)
     {
         return new(bug.Title, bug.Description, (Domain.Severity)bug.Severity,
             bug.AffectedVersion, bug.AffectedUsers, MapUser(bug.CreatedBy), MapUser(bug.AssignedTo),
             bug?.Images?.Select(image => Convert.FromBase64String(image.ImageData)).ToArray()
-            ?? Enumerable.Empty<byte[]>()
+            ?? Enumerable.Empty<byte[]>().ToArray()
         )
         {
             Id = bug.Id,
